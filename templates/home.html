@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+/* HERO BACKGROUND */
+.hero {
+  background-image: url("{% static 'images/image.jpg' %}") ;
+  /* background: image("{% static 'images/image.pg' %}") no-repeat center center/cover; */
+  min-height: 100vh; /* full screen height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #ffffff;
+  position: relative;
+}
+
+/* DARK OVERLAY FOR TEXT VISIBILITY */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  padding: 20px;
+}
+
+/* BUTTON SPACING */
+.hero .btn {
+  padding: 12px 26px;
+  font-size: 18px;
+}
+
+/* CARD SECTION */
+.feature-section {
+  margin-top: -60px;
+  padding-bottom: 40px;
+}
+
+.card {
+  border: none;
+  border-radius: 14px;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+body {
+  overflow-x: hidden;
+}
+</style>
+
+<div class="hero">
+  <div class="hero-content">
+    <h1 style="font-size: 100px;">EventCart</h1>
+    <h1 class="mb-3">Discover meetups, workshops, and conferences in one place.</h1>
+    <p class="lead mb-4">
+      Search across multiple sources, organize by category, and filter by area.
+      Build your event calendar in minutes.
+    </p>
+    <div>
+      <a href="{% url 'user_register' %}" class="btn btn-primary btn-lg">Get Started</a>
+      <a href="{% url 'user_login' %}" class="btn btn-outline-light btn-lg ms-2">Already have an account</a>
+    </div>
+  </div>
+</div>
+
+<div class="container feature-section">
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card p-4 h-100 shadow">
+        <h5>AI-Powered Event Discovery</h5>
+        <p class="text-muted">
+          EventCart intelligently analyzes and recommends seminars, conferences,
+          and webinars based on your interests and preferences.
+        </p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-4 h-100 shadow">
+        <h5>Multi-Platform Aggregation</h5>
+        <p class="text-muted">
+          We collect events from multiple global platforms in one place,
+          so you never miss important academic or tech opportunities.
+        </p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card p-4 h-100 shadow">
+        <h5>Real-Time Updates</h5>
+        <p class="text-muted">
+          Our automated system continuously updates event data,
+          ensuring you always see the latest and verified listings.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

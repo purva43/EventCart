@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero mb-4">
+  <div class="row align-items-center">
+    <div class="col-lg-7">
+      <h1 class="mb-3">Admin Control Room</h1>
+      <p class="lead muted">Start or stop the collector and tune its interval and search scope.</p>
+    </div>
+    <div class="col-lg-5 mt-3 mt-lg-0">
+      <div class="card p-3">
+        <div class="small-muted">Scheduler running: {{ scheduler_running }}</div>
+        <div class="small-muted">Last run: {{ last_run|default:"-" }}</div>
+        <div class="small-muted">Last collected: {{ last_result_count }}</div>
+        {% if last_error %}
+          <div class="small-muted text-danger">Last error: {{ last_error }}</div>
+        {% endif %}
+        <div class="small-muted mt-2">Total events: {{ total_events }}</div>
+        <div class="small-muted">Total folders: {{ total_folders }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form method="post" class="card p-4">
+  {% csrf_token %}
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label for="city" class="form-label">City (comma-separated)</label>
+      <input type="text" class="form-control" id="city" name="city" value="{{ city }}">
+    </div>
+    <div class="col-md-3">
+      <label for="num_results" class="form-label">Sites per interval</label>
+      <input type="number" class="form-control" id="num_results" name="num_results" min="1" max="100" value="{{ num_results }}">
+    </div>
+    <div class="col-md-3">
+      <label for="interval_minutes" class="form-label">Interval (minutes)</label>
+      <input type="number" class="form-control" id="interval_minutes" name="interval_minutes" min="1" max="1440" value="{{ interval_minutes }}">
+    </div>
+  </div>
+  <div class="mt-3">
+    <button type="submit" class="btn btn-primary" name="action" value="start">Start</button>
+    <button type="submit" class="btn btn-outline-danger ms-2" name="action" value="stop">Stop</button>
+    <a href="{% url 'folders' %}" class="btn btn-outline-secondary ms-2">View Folders</a>
+  </div>
+</form>
+{% endblock %}

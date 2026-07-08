@@ -1,0 +1,11 @@
+in this django app .
+now i want  when the user logged in 
+in they can see all the folders ok  . 
+now below that i want option to fetch 
+the location . once the location is 
+fetch then all the events realted 
+near by the user can be seen to user ok.
+as there is location and address in all 
+most of the websties data got it . 
+rank them closest to far . 
+can use anyapi or anylibrary for that . 

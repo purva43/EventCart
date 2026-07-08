@@ -1,0 +1,387 @@
+﻿{% extends "base.html" %}
+{% block content %}
+ {% load static %}
+<style>
+.nearby-hero {
+  position: relative;
+  background: url("{% static 'images/header-bg.png' %}") center/cover no-repeat;
+  border-radius: 16px;
+  overflow: hidden;
+  color: white;
+  margin-bottom: 25px;
+}
+
+.nearby-hero::before {
+  
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(37,99,235,0.9), rgba(56,189,248,0.75));
+}
+
+.nearby-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 30px;
+}
+
+.nearby-controls {
+  background: #ffffff;
+  border-radius: 40px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;              /* space between items */
+  flex-wrap: nowrap;      /* FORCE ONE LINE */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  border: 1px solid #e5e7eb;
+}
+
+.nearby-controls label {
+  margin: 0;
+  font-weight: 600;
+  color: #111827;
+}
+
+.nearby-controls select {
+  border-radius: 25px;
+  padding: 6px 14px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+}
+
+.nearby-controls button {
+  border-radius: 25px;
+  padding: 6px 16px;
+  white-space: nowrap;   /* prevent text break */
+}
+
+
+</style>
+
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <div>
+    <h2 class="mb-0">Events in &ldquo;{{ folder_name }}&rdquo;</h2>
+    {% if selected_area %}
+      <div class="small-muted">Filtered by area: <strong>{{ selected_area }}</strong></div>
+    {% endif %}
+  </div>
+  <div>
+    <a href="{% url 'folders' %}" class="btn btn-sm btn-outline-secondary">Back to Home</a>
+  </div>
+</div>
+
+<form method="get" class="mb-3" style="max-width: 520px;">
+  <label for="areaSelect" class="form-label">Filter by area</label>
+  <select id="areaSelect" name="area" class="form-select" onchange="this.form.submit()">
+    <option value="">All areas</option>
+    {% for a in areas %}
+      <option value="{{ a }}" {% if a == selected_area %}selected{% endif %}>{{ a }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+{% if events %}
+ 
+
+<div class="nearby-hero">
+  <div class="nearby-hero-content">
+<center>
+    <h3 class="mb-1">Find Nearby Events</h3>
+    <div class="mb-3">
+      Click once to use your live location. We show nearby events and also city-matched events.
+    </div>
+
+    <div class="nearby-controls">
+
+  <div class="d-flex align-items-center gap-2">
+    <label for="nearbyRadius">Radius (km)</label>
+    <select id="nearbyRadius" class="form-select form-select-sm">
+      <option value="3">3 km</option>
+      <option value="5">5 km</option>
+      <option value="10" selected>10 km</option>
+      <option value="20">20 km</option>
+      <option value="50">50 km</option>
+      <option value="all">Show all</option>
+    </select>
+  </div>
+
+  <button id="findNearbyBtn" type="button" class="btn btn-primary btn-sm">
+    Find Nearby Me
+  </button>
+
+  <button id="resetNearbyBtn" type="button" class="btn btn-outline-secondary btn-sm">
+    Reset View
+  </button>
+
+</div>
+
+</center>
+    <div id="nearbyStatus" class="small mt-2"></div>
+
+  </div>
+</div>
+
+
+  <div id="nearbyMapCard" class="card mb-3" style="display:none;">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">Nearby Events Map</h5>
+        <div class="small-muted">Blue marker: your location</div>
+      </div>
+      <div id="nearbyMap" style="height: 360px; border-radius: 10px;"></div>
+    </div>
+  </div>
+
+  <div class="row g-3" id="eventsGrid">
+    {% for ev in events %}
+      <div class="col-md-6 event-card" data-event-id="{{ ev.id }}">
+        <div class="card h-100">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">
+              <a class="card-link" href="{% url 'event_detail' eid=ev.id %}?fid={{ folder_id }}">{{ ev.title|default:"Untitled event" }}</a>
+            </h5>
+
+            {% if ev.description %}
+              <p class="card-text muted">{{ ev.description }}</p>
+            {% endif %}
+
+            <div class="mt-auto">
+              {% if ev.location_name %}
+                <div class="small-muted"><b style="color: rgb(50, 112, 255);" >Location:</b> {{ ev.location_name }}</div>
+              {% elif ev.address %}
+                <div class="small-muted"><b style="color: rgb(50, 112, 255);">Address:</b> {{ ev.address }}</div>
+              {% elif ev.area %}
+                <div class="small-muted"><b style="color: rgb(50, 112, 255);"> Area: </b> {{ ev.area }}</div>
+              {% endif %}
+              <div class="small-muted nearby-distance" style="display:none;"></div>
+              <div class="mt-2">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-success interest-btn"
+                  data-interest-url="{% url 'api_mark_event_interest' eid=ev.id %}"
+                >
+                  I'm Interested
+                </button>
+                <a class="btn btn-sm btn-outline-primary" href="{{ ev.url }}" target="_blank">Register</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <script>
+    (function () {
+      const findBtn = document.getElementById("findNearbyBtn");
+      const resetBtn = document.getElementById("resetNearbyBtn");
+      const statusEl = document.getElementById("nearbyStatus");
+      const radiusEl = document.getElementById("nearbyRadius");
+      const cards = Array.from(document.querySelectorAll(".event-card"));
+      const mapCard = document.getElementById("nearbyMapCard");
+      const mapContainer = document.getElementById("nearbyMap");
+      const selectedArea = "{{ selected_area|default:''|escapejs }}";
+      const interestButtons = Array.from(document.querySelectorAll(".interest-btn"));
+
+      let map = null;
+      let mapLayer = null;
+
+      function resetCards() {
+        cards.forEach((card) => {
+          card.style.display = "";
+          const distanceEl = card.querySelector(".nearby-distance");
+          distanceEl.style.display = "none";
+          distanceEl.textContent = "";
+        });
+      }
+
+      function ensureMap() {
+        if (!map) {
+          map = L.map(mapContainer);
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: "&copy; OpenStreetMap contributors"
+          }).addTo(map);
+        }
+        if (mapLayer) {
+          mapLayer.clearLayers();
+        } else {
+          mapLayer = L.layerGroup().addTo(map);
+        }
+      }
+
+      function renderMap(userLat, userLon, nearbyResults) {
+        ensureMap();
+        const points = [];
+        const userMarker = L.marker([userLat, userLon]).addTo(mapLayer);
+        userMarker.bindPopup("Your location");
+        points.push([userLat, userLon]);
+
+        nearbyResults.forEach((item) => {
+          if (item.lat == null || item.lon == null) {
+            return;
+          }
+          const marker = L.marker([item.lat, item.lon]).addTo(mapLayer);
+          const line1 = item.title || "Event";
+          const line2 = item.normalized_address || item.address || item.location_name || "Location unavailable";
+          const line3 = item.distance_km != null
+            ? ("Distance: " + item.distance_km + " km")
+            : (item.match_type === "all" ? "Included in Show all view" : ("Matched by city: " + (item.area || "")));
+          marker.bindPopup("<strong>" + line1 + "</strong><br>" + line2 + "<br>" + line3);
+          points.push([item.lat, item.lon]);
+        });
+
+        if (points.length === 1) {
+          map.setView(points[0], 12);
+        } else {
+          map.fitBounds(points, { padding: [25, 25] });
+        }
+
+        mapCard.style.display = "block";
+        setTimeout(() => map.invalidateSize(), 100);
+      }
+
+      function hideMap() {
+        mapCard.style.display = "none";
+        if (mapLayer) {
+          mapLayer.clearLayers();
+        }
+      }
+
+      function readCookie(name) {
+        const cookieValue = document.cookie
+          .split(";")
+          .map((part) => part.trim())
+          .find((part) => part.startsWith(name + "="));
+        if (!cookieValue) {
+          return "";
+        }
+        return decodeURIComponent(cookieValue.split("=").slice(1).join("="));
+      }
+
+      async function submitInterest(button) {
+        const endpoint = button.getAttribute("data-interest-url");
+        if (!endpoint) {
+          alert("Unable to submit interest right now.");
+          return;
+        }
+        button.disabled = true;
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "X-CSRFToken": readCookie("csrftoken"),
+            }
+          });
+          const payload = await response.json();
+          if (!response.ok || !payload.ok) {
+            alert(payload.message || "Unable to save your interest right now.");
+            return;
+          }
+          alert(payload.message || "You will get notification related to this event.");
+        } catch (error) {
+          alert("Unable to save your interest right now.");
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      resetBtn.addEventListener("click", function () {
+        resetCards();
+        hideMap();
+        statusEl.textContent = "Showing all events.";
+      });
+
+      findBtn.addEventListener("click", function () {
+        if (!navigator.geolocation) {
+          statusEl.textContent = "Geolocation is not supported in this browser.";
+          return;
+        }
+
+        statusEl.textContent = "Fetching your live location...";
+        navigator.geolocation.getCurrentPosition(async function (position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const radius = radiusEl.value || "10";
+
+          const params = new URLSearchParams();
+          params.set("lat", String(lat));
+          params.set("lon", String(lon));
+          params.set("radius_km", String(radius));
+          if (selectedArea) {
+            params.set("area", selectedArea);
+          }
+
+          try {
+            statusEl.textContent = "Checking nearby events...";
+            const response = await fetch("{% url 'api_folder_nearby_events' fid=folder_id %}?" + params.toString(), {
+              method: "GET",
+              headers: { "Accept": "application/json" }
+            });
+            const payload = await response.json();
+            if (!response.ok) {
+              hideMap();
+              statusEl.textContent = payload.error || "Unable to fetch nearby events.";
+              return;
+            }
+
+            const nearbyMap = new Map(payload.results.map((item) => [item.id, item]));
+            cards.forEach((card) => {
+              const id = card.getAttribute("data-event-id");
+              const distanceEl = card.querySelector(".nearby-distance");
+              const found = nearbyMap.get(id);
+              if (!found) {
+                card.style.display = "none";
+                distanceEl.style.display = "none";
+                return;
+              }
+              card.style.display = "";
+              distanceEl.style.display = "block";
+              if (found.distance_km != null) {
+                distanceEl.textContent = "Distance from your location: " + found.distance_km + " km";
+              } else if (found.match_type === "all") {
+                distanceEl.textContent = "Included in Show all view.";
+              } else {
+                distanceEl.textContent = "Matched by city: " + (payload.user_city || found.area || "Unknown");
+              }
+            });
+
+            if (payload.results.length > 0) {
+              renderMap(lat, lon, payload.results);
+            } else {
+              hideMap();
+            }
+
+            const cityText = payload.user_city ? (" Detected city: " + payload.user_city + ".") : "";
+            if (radius === "all") {
+              statusEl.textContent = "Showing all " + payload.count + " events for this folder. Map pins are shown where address coordinates are available.";
+            } else {
+              statusEl.textContent = "Found " + payload.count + " matching events within " + radius + " km or same-city match." + cityText;
+            }
+          } catch (error) {
+            hideMap();
+            statusEl.textContent = "Unable to fetch nearby events right now.";
+          }
+        }, function () {
+          statusEl.textContent = "Location access denied. Allow location permission and try again.";
+        }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+      });
+
+      interestButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          submitInterest(button);
+        });
+      });
+    })();
+  </script>
+{% else %}
+  <p class="muted">No events found in this folder (or for the selected area).</p>
+{% endif %}
+{% endblock %}

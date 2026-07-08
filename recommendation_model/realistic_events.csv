@@ -1,0 +1,51 @@
+event_id,event_name,category,description,tags,location,duration_hours
+1,Hackathon 1,tech,This is a tech event focusing on fun.,"tech, competition",Bangalore,4
+2,Cloud Bootcamp 2,tech,This is a tech event focusing on innovation.,"tech, show",Pune,3
+3,Cloud Bootcamp 3,tech,This is a tech event focusing on growth.,"tech, learning",Pune,6
+4,Data Science Conference 4,tech,This is a tech event focusing on innovation.,"tech, networking",Mumbai,5
+5,Data Science Conference 5,tech,This is a tech event focusing on growth.,"tech, networking",Mumbai,2
+6,AI Summit 6,tech,This is a tech event focusing on innovation.,"tech, learning",Mumbai,6
+7,AI Summit 7,tech,This is a tech event focusing on performance.,"tech, show",Delhi,2
+8,AI Summit 8,tech,This is a tech event focusing on creativity.,"tech, competition",Pune,5
+9,AI Summit 9,tech,This is a tech event focusing on fun.,"tech, learning",Mumbai,6
+10,AI Summit 10,tech,This is a tech event focusing on creativity.,"tech, competition",Bangalore,3
+11,Sketching Class 1,art,This is a art event focusing on growth.,"art, community",Mumbai,2
+12,Painting Workshop 2,art,This is a art event focusing on fun.,"art, show",Bangalore,5
+13,Art Exhibition 3,art,This is a art event focusing on growth.,"art, networking",Delhi,5
+14,Painting Workshop 4,art,This is a art event focusing on growth.,"art, competition",Mumbai,2
+15,Painting Workshop 5,art,This is a art event focusing on fun.,"art, show",Delhi,5
+16,Art Exhibition 6,art,This is a art event focusing on growth.,"art, community",Bangalore,2
+17,Photography Walk 7,art,This is a art event focusing on growth.,"art, competition",Delhi,4
+18,Art Exhibition 8,art,This is a art event focusing on performance.,"art, learning",Bangalore,4
+19,Creative Minds Meetup 9,art,This is a art event focusing on innovation.,"art, community",Pune,2
+20,Painting Workshop 10,art,This is a art event focusing on fun.,"art, competition",Pune,6
+21,Open Mic 1,music,This is a music event focusing on innovation.,"music, networking",Mumbai,6
+22,Live Concert 2,music,This is a music event focusing on fun.,"music, community",Delhi,4
+23,Guitar Workshop 3,music,This is a music event focusing on innovation.,"music, community",Mumbai,3
+24,Music Fest 4,music,This is a music event focusing on growth.,"music, show",Mumbai,2
+25,Open Mic 5,music,This is a music event focusing on innovation.,"music, competition",Bangalore,5
+26,DJ Night 6,music,This is a music event focusing on performance.,"music, community",Pune,4
+27,Music Fest 7,music,This is a music event focusing on innovation.,"music, competition",Bangalore,2
+28,Live Concert 8,music,This is a music event focusing on performance.,"music, competition",Delhi,6
+29,Live Concert 9,music,This is a music event focusing on creativity.,"music, community",Mumbai,3
+30,Music Fest 10,music,This is a music event focusing on creativity.,"music, show",Bangalore,6
+31,Yoga Session 1,sports,This is a sports event focusing on performance.,"sports, learning",Bangalore,4
+32,Marathon 2,sports,This is a sports event focusing on performance.,"sports, networking",Delhi,5
+33,Football League 3,sports,This is a sports event focusing on performance.,"sports, networking",Pune,5
+34,Yoga Session 4,sports,This is a sports event focusing on fun.,"sports, show",Pune,3
+35,Cycling Event 5,sports,This is a sports event focusing on performance.,"sports, show",Bangalore,3
+36,Marathon 6,sports,This is a sports event focusing on growth.,"sports, community",Pune,6
+37,Football League 7,sports,This is a sports event focusing on fun.,"sports, learning",Delhi,6
+38,Football League 8,sports,This is a sports event focusing on performance.,"sports, learning",Bangalore,2
+39,Yoga Session 9,sports,This is a sports event focusing on growth.,"sports, competition",Mumbai,3
+40,Marathon 10,sports,This is a sports event focusing on growth.,"sports, competition",Mumbai,4
+41,Marketing Workshop 1,business,This is a business event focusing on growth.,"business, networking",Pune,4
+42,Networking Event 2,business,This is a business event focusing on performance.,"business, competition",Pune,5
+43,Marketing Workshop 3,business,This is a business event focusing on creativity.,"business, community",Mumbai,3
+44,Investor Meetup 4,business,This is a business event focusing on innovation.,"business, show",Bangalore,2
+45,Startup Pitch 5,business,This is a business event focusing on fun.,"business, competition",Pune,4
+46,Entrepreneur Summit 6,business,This is a business event focusing on innovation.,"business, networking",Pune,2
+47,Startup Pitch 7,business,This is a business event focusing on innovation.,"business, community",Pune,3
+48,Networking Event 8,business,This is a business event focusing on creativity.,"business, networking",Mumbai,4
+49,Startup Pitch 9,business,This is a business event focusing on creativity.,"business, networking",Bangalore,2
+50,Startup Pitch 10,business,This is a business event focusing on performance.,"business, learning",Mumbai,5

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-3">
+  <div class="col-md-8">
+    <form method="get" class="d-flex gap-2">
+      <input class="form-control" name="q" placeholder="Search events, keywords, organizers..." value="{{ q or '' }}">
+      <select name="category" class="form-select" style="max-width:220px;">
+        <option value="">All categories</option>
+        {% for c in categories %}
+          <option value="{{ c.name }}" {% if c.name == category %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+      <select name="area" class="form-select" style="max-width:160px;">
+        <option value="">Anywhere</option>
+        {% for a in areas %}
+          <option value="{{ a }}" {% if a == area %}selected{% endif %}>{{ a }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-primary">Search</button>
+    </form>
+  </div>
+  <div class="col-md-4 text-end">
+    <small class="text-muted">Total: {{ total }}</small>
+  </div>
+</div>
+
+<div class="row g-3">
+  {% for ev in events %}
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h5 class="card-title mb-1">
+                <a href="{{ url_for('event_page', eid=ev.id) }}">{{ ev.title or 'Untitled Event' }}</a>
+              </h5>
+              <div class="small-muted">{{ ev.categories | join(', ') }}</div>
+            </div>
+            <div class="text-end">
+              {% if ev.start_time %}
+                <div class="fw-bold">{{ ev.start_time.split('T')[0] }}</div>
+              {% else %}
+                <div class="small-muted">Date TBA</div>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if ev.description %}
+            <p class="card-text mt-2">{{ ev.description[:220] }}{% if ev.description|length > 220 %}...{% endif %}</p>
+          {% endif %}
+
+          <div class="mt-auto">
+            {% if ev.address %}
+              <div class="small-muted mb-1"><strong>Address:</strong> {{ ev.address }}</div>
+            {% elif ev.location_name %}
+              <div class="small-muted mb-1"><strong>Location:</strong> {{ ev.location_name }}</div>
+            {% elif ev.area %}
+              <div class="small-muted mb-1"><strong>Area:</strong> {{ ev.area }}</div>
+            {% endif %}
+
+            <div class="d-flex gap-2">
+              <a class="btn btn-sm btn-outline-primary" href="{{ url_for('event_page', eid=ev.id) }}">View details</a>
+              <a class="btn btn-sm btn-primary" href="{{ ev.url }}" target="_blank">Open / Tickets</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Pagination -->
+<div class="d-flex justify-content-center mt-4">
+  <nav>
+    <ul class="pagination">
+      {% set prev_page = page-1 if page>1 else None %}
+      <li class="page-item {% if not prev_page %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('discover_page', q=q, area=area, category=category, date_from=date_from, date_to=date_to, page=page-1) if prev_page else '#' }}">Previous</a>
+      </li>
+
+      {% for p in range(1, total_pages+1) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+          <a class="page-link" href="{{ url_for('discover_page', q=q, area=area, category=category, date_from=date_from, date_to=date_to, page=p) }}">{{ p }}</a>
+        </li>
+      {% endfor %}
+
+      {% set next_page = page+1 if page < total_pages else None %}
+      <li class="page-item {% if not next_page %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('discover_page', q=q, area=area, category=category, date_from=date_from, date_to=date_to, page=page+1) if next_page else '#' }}">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+{% endblock %}

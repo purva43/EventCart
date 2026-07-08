@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h2 class="mb-1">Search Events</h2>
+    <div class="muted">Use search to personalize recommendations.</div>
+  </div>
+  <a href="{% url 'folders' %}" class="btn btn-sm btn-outline-secondary">Back to browse</a>
+</div>
+
+<div class="card p-3 mb-4">
+  <form method="get" action="{% url 'search_events' %}" class="row g-2 align-items-center">
+    <div class="col-md-10">
+      <input type="text" name="q" class="form-control" value="{{ query }}" placeholder="Search events by keyword, city, or address">
+    </div>
+    <div class="col-md-2 d-grid">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+  </form>
+</div>
+
+{% if query and events %}
+  <div class="row g-3">
+    {% for ev in events %}
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">
+              <a class="card-link" href="{% url 'event_detail' eid=ev.id %}">{{ ev.title|default:"Untitled event" }}</a>
+            </h5>
+            {% if ev.description %}
+              <p class="card-text muted">{{ ev.description }}</p>
+            {% endif %}
+            <div class="mt-auto">
+              {% if ev.location_name %}
+                <div class="small-muted">Location: {{ ev.location_name }}</div>
+              {% elif ev.address %}
+                <div class="small-muted">Address: {{ ev.address }}</div>
+              {% elif ev.area %}
+                <div class="small-muted">Area: {{ ev.area }}</div>
+              {% endif %}
+              <div class="mt-2">
+                <a class="btn btn-sm btn-outline-primary" href="{{ ev.url }}" target="_blank">Open original</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% elif query %}
+  <p class="muted">No events matched your search.</p>
+{% else %}
+  <p class="muted">Enter a search query to find events.</p>
+{% endif %}
+{% endblock %}
