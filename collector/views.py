@@ -588,6 +588,14 @@ def serve_html_page(request, filename: str):
     return FileResponse(open(file_path, "rb"), content_type="text/html")
 
 
+def api_health(request):
+    return JsonResponse({
+        "status": "ok",
+        "service": "eventcart",
+        "version": "v1",
+    })
+
+
 @user_or_admin_required
 def api_nearby_selected_events(request):
     event_ids = request.GET.getlist("event_ids")

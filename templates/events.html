@@ -161,7 +161,7 @@
                 <button
                   type="button"
                   class="btn btn-sm btn-success interest-btn"
-                  data-interest-url="{% url 'api_mark_event_interest' eid=ev.id %}"
+                  data-interest-url="{% url 'api_v1_mark_event_interest' eid=ev.id %}"
                 >
                   I'm Interested
                 </button>
@@ -321,7 +321,7 @@
 
           try {
             statusEl.textContent = "Checking nearby events...";
-            const response = await fetch("{% url 'api_folder_nearby_events' fid=folder_id %}?" + params.toString(), {
+            const response = await fetch("{% url 'api_v1_folder_nearby_events' fid=folder_id %}?" + params.toString(), {
               method: "GET",
               headers: { "Accept": "application/json" }
             });

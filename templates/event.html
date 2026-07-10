@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<a href="{{ request.META.HTTP_REFERER|default_if_none:''|default:'' }}" class="btn btn-sm btn-outline-secondary mb-3">Back</a>
+<a href="{{ request.META.HTTP_REFERER|default_if_none:"/"|default:"/" }}"class="btn btn-sm btn-outline-secondary mb-3">Back</a>
 <script>
   if (!document.currentScript.previousElementSibling.getAttribute('href')) {
     document.currentScript.previousElementSibling.setAttribute('href', "{% url 'folders' %}");
@@ -29,7 +29,7 @@
   type="button"
   id="interestBtn"
   class="btn btn-success btn-sm"
-  data-interest-url="{% url 'api_mark_event_interest' eid=event.id %}"
+  data-interest-url="{% url 'api_v1_mark_event_interest' eid=event.id %}"
 >
   I'm Interested
 </button>

@@ -31,10 +31,13 @@ from flask import Flask, jsonify, render_template, send_from_directory, request
 from apscheduler.schedulers.background import BackgroundScheduler
 import requests
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ----- CONFIG -----
-SERPAPI_KEY = "a391a3ec65a772e25e8483b0be03ec7f0ba80b15d78e3ff9d68099ddd1bee45b"
-EVENTBRITE_TOKEN = "V7XZ3QTC4MKV3GSOUH"  # optional to fetch Eventbrite venue
+SERPAPI_KEY = os.getenv("SERPAPI_KEY", "")
+EVENTBRITE_TOKEN = os.getenv("EVENTBRITE_TOKEN", "")  # optional to fetch Eventbrite venue
 MEETUP_TOKEN = os.getenv("MEETUP_TOKEN", "")          # optional to fetch Meetup venue
 OPENCAGE_KEY = os.getenv("OPENCAGE_KEY", "")          # optional to normalize address
 
@@ -689,21 +692,25 @@ def serve_html_page(filename):
     return send_from_directory(HTML_DIR, filename)
 
 # JSON endpoints
-@app.route("/api/areas")
+@app.route("/api/v1/health")
+def api_health():
+    return jsonify({"status": "ok", "service": "eventcart", "version": "v1"})
+
+@app.route("/api/v1/areas")
 def api_areas():
     cur = conn.cursor()
     cur.execute("SELECT DISTINCT area FROM events WHERE area IS NOT NULL ORDER BY area")
     rows = cur.fetchall()
     return jsonify([r[0] for r in rows if r[0]])
 
-@app.route("/api/folders")
+@app.route("/api/v1/folders")
 def api_list_folders():
     cur = conn.cursor()
     cur.execute("SELECT id, name FROM folders ORDER BY name")
     rows = cur.fetchall()
     return jsonify([{"id": r[0], "name": r[1]} for r in rows])
 
-@app.route("/api/folders/<int:fid>/events")
+@app.route("/api/v1/folders/<int:fid>/events")
 def api_folder_events(fid):
     area = request.args.get("area", None)
     cur = conn.cursor()

@@ -23,12 +23,12 @@ load_dotenv(BASE_DIR / ".env")
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)f(o))=8m@xbf2tzzr%g5cp_$g95c_dwf_jv#3@$d#(6ctez!@'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django-insecure-dev-key-change-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [host.strip() for host in os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",") if host.strip()]
 
 
 # Application definition
@@ -131,8 +131,8 @@ DATA_DIR = BASE_DIR / "data"
 HTML_DIR = DATA_DIR / "html"
 DB_PATH = DATA_DIR / "events.db"
 
-SERPAPI_KEY = os.getenv("SERPAPI_KEY", "a391a3ec65a772e25e8483b0be03ec7f0ba80b15d78e3ff9d68099ddd1bee45b")
-EVENTBRITE_TOKEN = os.getenv("EVENTBRITE_TOKEN", "V7XZ3QTC4MKV3GSOUH")
+SERPAPI_KEY = os.getenv("SERPAPI_KEY", "")
+EVENTBRITE_TOKEN = os.getenv("EVENTBRITE_TOKEN", "")
 MEETUP_TOKEN = os.getenv("MEETUP_TOKEN", "")
 OPENCAGE_KEY = os.getenv("OPENCAGE_KEY", "")
 
