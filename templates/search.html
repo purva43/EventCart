@@ -19,6 +19,7 @@
   </form>
 </div>
 
+<div id="results">
 {% if query and events %}
   <div class="row g-3">
     {% for ev in events %}
@@ -53,4 +54,75 @@
 {% else %}
   <p class="muted">Enter a search query to find events.</p>
 {% endif %}
+ </div>
+ <script>
+const input = document.querySelector('input[name="q"]');
+const resultsDiv = document.getElementById('results');
+const searchUrl = "{% url 'search_events' %}";
+let debounceTimer;
+
+function renderResults(query, events) {
+  if (!query) {
+    resultsDiv.innerHTML = '<p class="muted">Enter a search query to find events.</p>';
+    return;
+  }
+  if (events.length === 0) {
+    resultsDiv.innerHTML = '<p class="muted">No events matched your search.</p>';
+    return;
+  }
+  let html = '<div class="row g-3">';
+  events.forEach(ev => {
+    const locLine = ev.location_name
+      ? `Location: ${ev.location_name}`
+      : ev.address
+        ? `Address: ${ev.address}`
+        : ev.area
+          ? `Area: ${ev.area}`
+          : '';
+    html += `
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">
+              <a class="card-link" href="/event/${ev.id}/">${ev.title || 'Untitled event'}</a>
+            </h5>
+            ${ev.description ? `<p class="card-text muted">${ev.description}</p>` : ''}
+            <div class="mt-auto">
+              ${locLine ? `<div class="small-muted">${locLine}</div>` : ''}
+              <div class="mt-2">
+                <a class="btn btn-sm btn-outline-primary" href="${ev.url}" target="_blank">Open original</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  });
+  html += '</div>';
+  resultsDiv.innerHTML = html;
+}
+
+function runSearch(query) {
+  resultsDiv.innerHTML = '<p class="muted">Searching…</p>';
+  fetch(`${searchUrl}?q=${encodeURIComponent(query)}`, {
+    headers: { "X-Requested-With": "XMLHttpRequest" }
+  })
+    .then(res => res.json())
+    .then(data => renderResults(data.query, data.events))
+    .catch(() => {
+      resultsDiv.innerHTML = '<p class="text-danger">Something went wrong. Try again.</p>';
+    });
+}
+
+input.addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  const query = input.value.trim();
+  debounceTimer = setTimeout(() => runSearch(query), 350);
+});
+
+// stop the normal full-page submit too, since JS now handles it
+document.querySelector('form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  runSearch(input.value.trim());
+});
+</script>
 {% endblock %}

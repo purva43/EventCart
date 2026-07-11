@@ -458,8 +458,9 @@ def search_events_page(request):
                 "address": r[7],
                 "area": r[8],
             })
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return JsonResponse({"query": q, "events": events})
     return render(request, "search.html", {"query": q, "events": events})
-
 
 @user_or_admin_required
 def folder_events_page(request, fid: int):
