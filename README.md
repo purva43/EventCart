@@ -2,8 +2,7 @@
 
 EventCart is a Django-based platform that discovers, organizes, and recommends technology events (hackathons, meetups, conferences, webinars, and workshops) in Indian cities like Pune, Mumbai, and Bengaluru.
 
-**Live Demo:** [https://your-live-link-here.com]([https://your-live-link-here.com)
-](https://eventcart.onrender.com)
+**Live Demo:**(https://eventcart.onrender.com)
 ---
 
 ## Features
